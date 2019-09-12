@@ -18,16 +18,16 @@ Architecture
 Using CodeIgniter was easy to setup.  The files that were changed and created
 for this application are as followes:
 
--.htaccess = Modified to remove index.php from the links
--css\styles.css - All the css is here, only spent maybe five minutes styling it
--application\controllers\Repositories.php - The control file
--application\config\database.php - Contains the database connection information
--application\config\routes.php - Used to route between the listing and detail pages
--application\models\Repositories_model.php - Handles the database connection and writing the data.
--application\views\Repositories_details.php
--application\views\Repositories_list.php
--application\views\templates\header.php
--application\views\templates\footer.php
+* .htaccess = Modified to remove index.php from the links
+* css\styles.css - All the css is here, only spent maybe five minutes styling it
+* application\controllers\Repositories.php - The control file
+* application\config\database.php - Contains the database connection information
+* application\config\routes.php - Used to route between the listing and detail pages
+* application\models\Repositories_model.php - Handles the database connection and writing the data.
+* application\views\Repositories_details.php - View for the individual repositories
+* application\views\Repositories_list.php - An overall list of all the repositories
+* application\views\templates\header.php - Header html for clean coding
+* application\views\templates\footer.php - Footer html for clean coding
 
 css for the application will be
 found in the upmost CSS folder.  The main controller is Repositories.php found

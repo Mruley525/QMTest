@@ -1,0 +1,20 @@
+body {
+	font: 13pt Tahoma;
+	margin:20px;
+	padding:0px;
+}
+a {
+	color:#0000CC;
+}
+
+table.repo_list th {
+	text-align:left;
+	padding:2px 15px;
+}
+table.repo_list td {
+	padding:2px 15px;
+}
+table.repo_list th:first-child, table.repo_list td:first-child {
+	padding-left:0px;
+}
+

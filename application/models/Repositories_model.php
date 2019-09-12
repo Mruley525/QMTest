@@ -1,8 +1,9 @@
 <?php
 class Repositories_model extends CI_Model 
 {
-	function function __construct()
-	{	$this->load->database();
+	function __construct()
+	{
+		$this->load->database();
 		
 		// If we don't have the table then build it
 		$query="CREATE TABLE IF NOT EXISTS `GitHubRepositories` (
@@ -14,11 +15,11 @@ class Repositories_model extends CI_Model
 				`Description` text,
 				`Stars` int(11),
 				`Updated` boolean,
-				PRIMARY KEY (`RepositoryID`)";
+				PRIMARY KEY (`RepositoryID`))";
 		$this->db->query($query);
 	}
 	
-	function updateRecords() {
+	function update_records() {
 		// First, we set all the records to not be updated
 		$query = 'UPDATE GitHubRepositories SET Updated = FALSE';
 		$this->db->query($query);
@@ -48,11 +49,11 @@ class Repositories_model extends CI_Model
 				
 				if (empty($data)) {
 					// If we find nothing then insert the record
-					$query="INSERT INTO GitHubRepositories VALUES('".$repodata['id']."', '".$repodata['name']."', '".$repodata['owner']['login']."', '".$repodata['created_at']."', '".$repodata['pushed_at']."', '".$repodata['description']."', '".$repodata['stargazers_count']."', TRUE)";
+					$query="INSERT INTO GitHubRepositories VALUES('".$repodata['id']."', '".$repodata['name']."', '".$repodata['owner']['login']."', '".$repodata['created_at']."', '".$repodata['pushed_at']."', '".addslashes($repodata['description'])."', '".$repodata['stargazers_count']."', TRUE)";
 					$this->db->query($query);
 				} else {
 					// Update the information
-					$query="UPDATE GitHubRepositories SET Name='".$repodata['name']."', OwnerUsername='".$repodata['owner']['login']."', CreatedDate='".$repodata['created_at']."', LastPushDate='".$repodata['pushed_at']."', Description='".$repodata['description']."', Stars='".$repodata['stargazers_count']."', Updated=TRUE WHERE RepositoryID='".$repodata['id']."'";
+					$query="UPDATE GitHubRepositories SET Name='".$repodata['name']."', OwnerUsername='".$repodata['owner']['login']."', CreatedDate='".$repodata['created_at']."', LastPushDate='".$repodata['pushed_at']."', Description='".addslashes($repodata['description'])."', Stars='".$repodata['stargazers_count']."', Updated=TRUE WHERE RepositoryID='".$repodata['id']."'";
 				}
 			}
 		}
@@ -62,13 +63,16 @@ class Repositories_model extends CI_Model
 		$this->db->query($query);
 	}
 	
-	
-	/*Insert*/
-	function saverecords($first_name,$last_name,$email)
+	function get_records($id = FALSE)
 	{
+		if ($id === FALSE)
+		{
+			$query = $this->db->get('GitHubRepositories');
+			return $query->result_array();
+		}
 
-	$query="insert into crud values('','$first_name','$last_name','$email')";
-	$this->db->query($query);
+		$query = $this->db->get_where('GitHubRepositories', array('RepositoryID' => $id));
+		return $query->row_array();
 	}
 	
 }

@@ -3,6 +3,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Welcome extends CI_Controller {
 
+	public function __construct()
+	{
+		/*call CodeIgniter's default Constructor*/
+		parent::__construct();
+		
+		
+		
+		echo "hello";
+	}
+
 	/**
 	 * Index Page for this controller.
 	 *

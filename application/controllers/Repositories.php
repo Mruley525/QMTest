@@ -40,5 +40,6 @@ class Repositories extends CI_Controller {
 	{
 		$this->repositories_model->update_records();
 		$this->index();
+		//redirect( site_url('') );
 	}
 }

@@ -1,66 +1,58 @@
-######################
-Beware the Jabberwocky
-######################
+#####################################
+QuaverMusic PHP Test with CodeIgniter
+#####################################
 
-CodeIgniter is an Application Development Framework - a toolkit - for people
-who build web sites using PHP. Its goal is to enable you to develop projects
-much faster than you could if you were writing code from scratch, by providing
-a rich set of libraries for commonly needed tasks, as well as a simple
-interface and logical structure to access these libraries. CodeIgniter lets
-you creatively focus on your project by minimizing the amount of code needed
-for a given task.
+This is a simple application that using cURL queries the GitHub repository
+list and finds the top 1000 most starred public PHP projects.
 
 *******************
 Release Information
 *******************
 
-This repo contains in-development code for future releases. To download the
-latest stable release please visit the `CodeIgniter Downloads
-<https://codeigniter.com/download>`_ page.
+This code is intented for the review of QuaverMusic and the author.
 
-**************************
-Changelog and New Features
-**************************
+************
+Architecture
+************
 
-You can find a list of all changes for each release in the `user
-guide change log <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/source/changelog.rst>`_.
+Using CodeIgniter was easy to setup.  The files that were changed and created
+for this application are as followes:
+
+.htaccess = Modified to remove index.php from the links
+css\styles.css - All the css is here, only spent maybe five minutes styling it
+application\controllers\Repositories.php - The control file
+application\config\database.php - Contains the database connection information
+application\config\routes.php - Used to route between the listing and detail pages
+application\models\Repositories_model.php - Handles the database connection and 
+writing the data.
+application\views\Repositories_details.php
+application\views\Repositories_list.php
+application\views\templates\header.php
+application\views\templates\footer.php
+
+css for the application will be
+found in the upmost CSS folder.  The main controller is Repositories.php found
 
 *******************
 Server Requirements
 *******************
 
-PHP version 5.6 or newer is recommended.
-
-It should work on 5.3.7 as well, but we strongly advise you NOT to run
-such old versions of PHP, because of potential security and performance
-issues, as well as missing features.
+I used the Xampp server (v 3.2.4) to create this application.  It comes with a small
+MySQL database and PHP 7.3.9 so installing CodeIgniter was easy.
 
 ************
 Installation
 ************
 
-Please see the `installation section <https://codeigniter.com/user_guide/installation/index.html>`_
-of the CodeIgniter User Guide.
+Installation should only consist of three steps:
 
-*******
-License
-*******
+1) Create a database called quaver_test.
 
-Please see the `license
-agreement <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/source/license.rst>`_.
+2) Create a folder called QuaverMusicTest in the htdocs and place all the files there.
 
-*********
-Resources
-*********
-
--  `User Guide <https://codeigniter.com/docs>`_
--  `Language File Translations <https://github.com/bcit-ci/codeigniter3-translations>`_
--  `Community Forums <http://forum.codeigniter.com/>`_
--  `Community Wiki <https://github.com/bcit-ci/CodeIgniter/wiki>`_
--  `Community Slack Channel <https://codeigniterchat.slack.com>`_
-
-Report security issues to our `Security Panel <mailto:security@codeigniter.com>`_
-or via our `page on HackerOne <https://hackerone.com/codeigniter>`_, thank you.
+3) Open the php.ini file and boost the max_execution_time to 120.  The only faster way
+I could think of processing all the results would be to clear the database and do all
+inserts but even then you run the risk of some overlapping on the api result pages.
 
 ***************
 Acknowledgement

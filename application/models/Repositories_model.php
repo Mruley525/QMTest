@@ -36,7 +36,7 @@ class Repositories_model extends CI_Model
 		// Now we loop through 10 pages of 1000 results (ugh)
 		for ($i=1; $i<=10; $i++) {
 			// Get the data from the url and translate to something more workable
-			curl_setopt($c, CURLOPT_URL, 'https://api.github.com/search/repositories?q=is:public+language:php&sort=stars&order=desc&page='.$i.'&per_page=100');
+			curl_setopt($c, CURLOPT_URL, 'https://api.github.com/search/repositories?q=is:public+language:php&sort=stars+name&order=desc&per_page=100&page='.$i);
 			$content = curl_exec($c);
 			$curldata = json_decode($content,1);
 			
@@ -51,7 +51,7 @@ class Repositories_model extends CI_Model
 
 		// Make sure we have records to cycle through (in case curl failed)
 		if (count($datalist) > 0) {
-			echo count($datalist).' records retrieved from curl';
+			echo count($datalist).' records retrieved from curl, some repeats possible<br>';
 			// We have records so we first set all the records to not be updated
 			$query = 'UPDATE GitHubRepositories SET Updated = FALSE';
 			$this->db->query($query);
@@ -63,14 +63,15 @@ class Repositories_model extends CI_Model
 				$query = $this->db->get_where('GitHubRepositories', array('RepositoryID' => $repodata['id']));
 				$data = $query->row_array();
 				
+				$query = '';
 				if (empty($data)) {
 					// If we find nothing then insert the record
 					$query="INSERT INTO GitHubRepositories VALUES('".$repodata['id']."', '".$repodata['name']."', '".$repodata['owner']['login']."', '".$repodata['created_at']."', '".$repodata['pushed_at']."', '".addslashes($repodata['description'])."', '".$repodata['stargazers_count']."', TRUE)";
-					$this->db->query($query);
 				} else {
 					// Update the information
 					$query="UPDATE GitHubRepositories SET Name='".$repodata['name']."', OwnerUsername='".$repodata['owner']['login']."', CreatedDate='".$repodata['created_at']."', LastPushDate='".$repodata['pushed_at']."', Description='".addslashes($repodata['description'])."', Stars='".$repodata['stargazers_count']."', Updated=TRUE WHERE RepositoryID='".$repodata['id']."'";
 				}
+				$this->db->query($query);
 			}
 			
 			// And finally anyone not updated gets the axe
@@ -83,6 +84,7 @@ class Repositories_model extends CI_Model
 	{
 		if ($id === FALSE)
 		{
+			$this->db->order_by('Name', 'ASC');
 			$query = $this->db->get('GitHubRepositories');
 			return $query->result_array();
 		}

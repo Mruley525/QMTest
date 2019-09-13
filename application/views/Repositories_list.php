@@ -1,4 +1,4 @@
-<a href="<?php echo site_url('repositories/update'); ?>"><button class="form-control">Signup</button></a>
+<a href="<?php echo site_url('repositories/update'); ?>"><button class="form-control">Import from GitHub</button></a>
 
 <h1><?php echo $title; ?></h1>
 
@@ -20,5 +20,4 @@
 
 <?php endforeach; ?>
 </table>
-
 

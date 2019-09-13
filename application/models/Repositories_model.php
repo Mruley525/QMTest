@@ -20,34 +20,53 @@ class Repositories_model extends CI_Model
 	}
 	
 	function update_records() {
-		// Setup the curl resource
-		$c = curl_init();
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($c, CURLOPT_USERPWD, "mruley525:C0d3Sh4r3");
-		curl_setopt($c, CURLOPT_HTTPHEADER, array(
-			'Accept: application/json',
-			'Content-Type: application/json',
-			'User-Agent: mruley525'
-		));
-		
-		// Create an empty array to hold the data
-		$datalist = array();
-		
-		// Now we loop through 10 pages of 1000 results (ugh)
-		for ($i=1; $i<=10; $i++) {
-			// Get the data from the url and translate to something more workable
-			curl_setopt($c, CURLOPT_URL, 'https://api.github.com/search/repositories?q=is:public+language:php&sort=stars+name&order=desc&per_page=100&page='.$i);
-			$content = curl_exec($c);
-			$curldata = json_decode($content,1);
+		$datalist = array(); // Holds all the records we find
+		$curl_array = array(); // An array of the different curl objects
+		$mh = curl_multi_init(); // The multi-handle curl object
+
+		for ($i=0; $i<10; $i++) {
+			// We need to initial every curl object
+			$c = curl_init( 'https://api.github.com/search/repositories?q=is:public+language:php&count=100&sort=stars&order=desc&count=1000&per_page=100&page='.($i+1) );
+			curl_setopt($c, CURLOPT_HTTPHEADER, array(
+				'Accept: application/json',
+				'Content-Type: application/json',
+				'User-Agent: mruley525'
+			));
+			curl_setopt($c, CURLOPT_HEADER, 1);
+			curl_setopt($c, CURLOPT_VERBOSE, 1);
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
 			
-			// If we got items then tack them onto our data list
+			// Finally put the new curl object on the array and in the multi-handle
+			array_push($curl_array, $c);
+			curl_multi_add_handle($mh, $curl_array[$i]);
+		}
+
+		// Here we actually run the multi-handle
+		$running = null;
+		do {
+			curl_multi_exec($mh, $running);
+		} while ($running);
+
+		// Time to process our results
+		for ($i=0; $i<10; $i++) {
+			curl_multi_remove_handle($mh, $curl_array[$i]);
+			$response = curl_multi_getcontent($curl_array[$i]);
+			// Trim off the header
+			$header_size = curl_getinfo($curl_array[$i], CURLINFO_HEADER_SIZE);
+			$header = substr($response, 0, $header_size);
+			$body = substr($response, $header_size);
+			// And store the data in a simple table
+			$curldata = json_decode($body,1);
+			// Once we're sure it contains goodies, we add it to our datalist
 			if (array_key_exists('items', $curldata)) {
 				array_push($datalist, ...$curldata['items']);
-				//$datalist = array_merge($datalist, $curldata['items']);
 			}
+			// Close the now completed curl
+			curl_close($curl_array[$i]);
 		}
-		// Curl is done so close it
-		curl_close($c);
+		// And finally close the multi-handle once it's empty
+		curl_multi_close($mh);
 
 		// Make sure we have records to cycle through (in case curl failed)
 		if (count($datalist) > 0) {
